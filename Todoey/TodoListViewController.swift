@@ -9,12 +9,17 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
     
+    let defaults = UserDefaults.standard
     var itemArray = ["hello", "its me", "ive been wondering"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+            itemArray = items
+        }
     }
+    
+    //MARK: - Table View
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
@@ -35,7 +40,6 @@ class TodoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //        print(itemArray[indexPath.row])
         
         if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
             tableView.cellForRow(at: indexPath)?.accessoryType = .none
@@ -66,7 +70,7 @@ class TodoListViewController: UITableViewController {
                 print(text)
             }
             self.tableView.reloadData()
-//            print("cool")
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
         }
         
         alert.addAction(action)
