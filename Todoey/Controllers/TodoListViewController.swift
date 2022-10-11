@@ -33,23 +33,24 @@ class TodoListViewController: UITableViewController {
         
         let cell = self.tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
+        let item = itemArray[indexPath.row]
+        
         if #available(iOS 14.0, *) {
             var content = cell.defaultContentConfiguration()
-            content.text = itemArray[indexPath.row].title
+            content.text = item.title
             cell.contentConfiguration = content
         } else {
-            cell.textLabel?.text = itemArray[indexPath.row].title
+            cell.textLabel?.text = item.title
         }
+        
+        cell.accessoryType = item.done == true ? .checkmark : .none
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        tableView.reloadData()
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
