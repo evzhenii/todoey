@@ -22,13 +22,16 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        
         let cell = self.tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-       return cell
+        if #available(iOS 14.0, *) {
+            var content = cell.defaultContentConfiguration()
+            content.text = itemArray[indexPath.row]
+            cell.contentConfiguration = content
+        } else {
+            cell.textLabel?.text = itemArray[indexPath.row]
+        }
+        return cell
     }
-    
-    
-    
 }
 
