@@ -9,21 +9,13 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
     
-    let defaults = UserDefaults.standard
     var itemArray = [Item]()
     
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
-            itemArray = items
-        }
-        print(dataFilePath)
-        
-        itemArray.append(Item(title: "Hello"))
-        itemArray.append(Item(title: "Its me"))
-        itemArray.append(Item(title: "Ive been wondering"))
+        loadItems()
     }
     
     //MARK: - Table View
@@ -69,7 +61,6 @@ class TodoListViewController: UITableViewController {
             alertTextField.placeholder = "create new item"
             
             textField = alertTextField
-            self.saveItems()
         }
         
         let action = UIAlertAction(title: "Add item", style: .default) { (action) in
@@ -79,8 +70,8 @@ class TodoListViewController: UITableViewController {
                 self.itemArray.append(newItem)
                 print(text)
             }
+            self.saveItems()
             self.tableView.reloadData()
-            self.defaults.set(self.itemArray, forKey: "TodoListArray")
         }
         
         alert.addAction(action)
@@ -93,7 +84,19 @@ class TodoListViewController: UITableViewController {
             let data = try encoder.encode(itemArray)
             try data.write(to: dataFilePath!)
         } catch {
-            print("Error encoding itema array\(error)")
+            print("Error encoding item array, \(error)")
+        }
+    }
+    
+    func loadItems() {
+        
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding item array, \(error)")
+            }
         }
     }
 }
