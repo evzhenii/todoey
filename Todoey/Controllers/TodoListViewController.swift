@@ -50,7 +50,6 @@ class TodoListViewController: UITableViewController {
 //        itemArray.remove(at: indexPath.row)
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         saveItems()
-        tableView.reloadData()
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -76,7 +75,6 @@ class TodoListViewController: UITableViewController {
                 self.itemArray.append(newItem)
             }
             self.saveItems()
-            self.tableView.reloadData()
         }
         
         alert.addAction(action)
@@ -91,6 +89,7 @@ class TodoListViewController: UITableViewController {
         } catch {
             print("Error saving context, \(error)")
         }
+        tableView.reloadData()
     }
     
     func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
