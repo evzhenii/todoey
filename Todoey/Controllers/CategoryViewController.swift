@@ -39,6 +39,18 @@ class CategoryViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            context.delete(categories[indexPath.row])
+            categories.remove(at: indexPath.row)
+            saveCategories()
+        }
+    }
+    
     //MARK: - Add new Categories
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -61,7 +73,6 @@ class CategoryViewController: UITableViewController {
         }
         alert.addAction(action)
         present(alert, animated: true)
-        
     }
     
     //MARK: - Data Manipulation Methods
