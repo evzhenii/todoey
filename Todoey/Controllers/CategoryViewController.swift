@@ -10,8 +10,8 @@ import RealmSwift
 
 class CategoryViewController: UITableViewController {
     
-    let realm = try! Realm()
-    
+    lazy var realm = try! Realm()
+
     var categories: Results<Category>?
     
     override func viewDidLoad() {
@@ -46,14 +46,16 @@ class CategoryViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-//            if let category = categories?[indexPath.row] {
-//
-//                do {
-//                    try realm.delete(category)
-//                } catch {
-//                    print("Error deleting category: \(error)")
-//                }
-//            }
+            if let category = categories?[indexPath.row] {
+                do {
+                    try realm.write({
+                        realm.delete(category)
+                    })
+                } catch {
+                    print("Error deleting category: \(error)")
+                }
+            }
+            tableView.reloadData()
         }
     }
     
