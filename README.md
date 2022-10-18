@@ -1,5 +1,5 @@
 # todoey
-To do app with categories connections made by 3 different data saving methods:
+To do app with categories connections and a search bar made by 3 different data saving methods (watch branches):
 * UserDefaults
 * CoreData
 * Realm
@@ -14,7 +14,7 @@ The project contains two interconnected screens
 
 | Check and deletion | Data saving | Themes |
 :---:|:---:|:---:
-![spaceX](https://user-images.githubusercontent.com/95398172/194376483-b12fcc45-f7ac-408d-a5a0-22af75e96e81.gif) | ![rockets](https://user-images.githubusercontent.com/95398172/194374661-7280f9d9-1aac-4562-a814-1cc96ded097b.gif) | ![spinner](https://user-images.githubusercontent.com/95398172/194375797-bff016e1-0430-44dd-8f39-f4f7ac2f9c83.gif)
+![Check and deletion](https://user-images.githubusercontent.com/95398172/196386105-0b96221e-6975-42bf-82cf-904223cfda26.gif) | ![Data saving](https://user-images.githubusercontent.com/95398172/196386135-dd372336-3306-4464-b0e5-1c28149e4e20.gif) | ![Dark white theme](https://user-images.githubusercontent.com/95398172/196386172-97309303-9d08-4fe0-9de4-80046e0e0950.gif)
 
 
 ## Technology stack
