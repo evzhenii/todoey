@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,9 +14,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+//        print(Realm.Configuration.defaultConfiguration.fileURL)
+        migrate()
+        
         return true
     }
+    
+    func migrate(){
+            let config = Realm.Configuration(
+                // Set the new schema version. This must be greater than the previously used
+                // version (if you've never set a schema version before, the version is 0).
+                schemaVersion: 1,
+                
+                // Set the block which will be called automatically when opening a Realm with
+                // a schema version lower than the one set above
+                migrationBlock: { migration, oldSchemaVersion in
+                    
+                    if oldSchemaVersion < 1 {
+                        migration.enumerateObjects(ofType: Item.className()) { oldObject, newObject in
+                            newObject?["dateCreated"] = Date()
+                        }
+                    }
+            }
+            )
+            Realm.Configuration.defaultConfiguration = config
+        }
 
     // MARK: UISceneSession Lifecycle
 
@@ -25,35 +48,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-    }
-
-    // MARK: - Core Data stack
-
-    lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "Todoey")
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        })
-        return container
-    }()
-
-    // MARK: - Core Data Saving support
-
-    func saveContext () {
-        let context = persistentContainer.viewContext
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-            }
-        }
-    }
-
 }
-
