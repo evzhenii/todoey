@@ -46,14 +46,13 @@ class CategoryViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            if let category = categories?[indexPath.row] {
-                do {
-                    try realm.write({
-                        realm.delete(category)
-                    })
-                } catch {
-                    print("Error deleting category: \(error)")
-                }
+            guard let category = categories?[indexPath.row] else { return }
+            do {
+                try realm.write({
+                    realm.delete(category)
+                })
+            } catch {
+                print("Error deleting category: \(error)")
             }
             tableView.reloadData()
         }

@@ -19,10 +19,6 @@ class TodoListViewController: UITableViewController {
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     //MARK: - Table View
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -34,7 +30,6 @@ class TodoListViewController: UITableViewController {
         let cell = self.tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
         if let item = todoItems?[indexPath.row] {
-            
             if #available(iOS 14.0, *) {
                 var content = cell.defaultContentConfiguration()
                 content.text = item.title
@@ -68,17 +63,17 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            if let item = todoItems?[indexPath.row] {
-                do {
-                    try self.realm.write {
-                        realm.delete(item)
-                    }
-                } catch {
-                    print("Error deleting item in realm database: \(error)")
+            guard let item = todoItems?[indexPath.row] else { return }
+            do {
+                try self.realm.write {
+                    realm.delete(item)
                 }
-                tableView.reloadData()
+            } catch {
+                print("Error deleting item in realm database: \(error)")
             }
+            tableView.reloadData()
         }
+        
     }
     
     
@@ -97,17 +92,17 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Add item", style: .default) { (action) in
             
             if let text = textField.text {
-                if let currentCategory = self.selectedCategory {
-                    do {
-                        try self.realm.write {
-                            let newItem = Item()
-                            newItem.title = text
-                            newItem.dateCreated = Date()
-                            currentCategory.items.append(newItem)
-                        }
-                    } catch {
-                        print("Error saving item in realm database: \(error)")
+                guard let currentCategory = self.selectedCategory else { return }
+                do {
+                    try self.realm.write {
+                        let newItem = Item()
+                        newItem.title = text
+                        newItem.dateCreated = Date()
+                        currentCategory.items.append(newItem)
                     }
+                } catch {
+                    print("Error saving item in realm database: \(error)")
+                    
                 }
             }
             self.tableView.reloadData()
@@ -130,23 +125,15 @@ class TodoListViewController: UITableViewController {
 extension TodoListViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        tableView.reloadData()
         if let text = searchBar.text {
             todoItems = todoItems?.filter("title CONTAINS[cd] %@", text).sorted(byKeyPath: "dateCreated", ascending: true)
             tableView.reloadData()
-//            let request : NSFetchRequest<Item> = Item.fetchRequest()
-//
-//            let predicate = NSPredicate(format: "title CONTAINS[cd] %@", text)
-//            request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-//
-//            loadItems(with: request, predicate)
         }
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0 {
             loadItems()
-            
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
             }
